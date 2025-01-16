@@ -1,0 +1,35 @@
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:6001/eureka/
+        fetch-registry: true
+        register-with-eureka: true
+
+spring:
+    cloud:
+        gateway:
+          discovery.locator:
+            enabled: true
+            lowerCaseServiceId: true
+          routes:
+                - id: GestionUtilisateur
+                  uri: lb://GestionUtilisateur
+                  predicates:
+                      - Path=/utilisateur/**
+                  filters:
+                      - RewritePath=/utilisateur/(?<path>.*), /$\{path}
+                - id: GestionProjet
+                  uri: lb://GestionProjet
+                  predicates:
+                      - Path=/projet/**
+                  filters:
+                      - RewritePath=/projet/(?<path>.*), /$\{path}
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+        - "*"
